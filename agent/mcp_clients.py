@@ -1,30 +1,12 @@
 from langchain_mcp_adapters.client import MultiServerMCPClient
-
+import os
+research_url = os.getenv("research_server_url")
 research_client = MultiServerMCPClient(
     {
         "research": {
             "transport": "streamable_http",
-            "url": "http://127.0.0.1:8000/mcp",
+            "url": research_url,
         }
     }
 )
 
-storage_client = MultiServerMCPClient(
-    {
-        "storage": {
-            "transport": "streamable_http",
-            "url": "http://127.0.0.1:8001/mcp",
-        }
-    }
-)
-
-from langchain_mcp_adapters.client import MultiServerMCPClient
-
-database_client = MultiServerMCPClient(
-    {
-        "database": {
-            "transport": "streamable_http",
-            "url": "http://127.0.0.1:8003/mcp",
-        }
-    }
-)

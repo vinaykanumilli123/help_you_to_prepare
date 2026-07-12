@@ -1,13 +1,14 @@
 from mcp import ClientSession
 from mcp.client.streamable_http import streamable_http_client
 import json
-
+import os
+STORAGE_URL = os.getenv("STORAGE_SERVER_URL")
 class StorageClient:
 
     async def save_markdown(self, content: str, filename: str):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8001/mcp"
+           STORAGE_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
@@ -27,7 +28,7 @@ class StorageClient:
     async def markdown_to_pdf(self, md_file: str):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8001/mcp"
+           STORAGE_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:

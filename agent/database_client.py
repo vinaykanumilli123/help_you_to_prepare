@@ -1,7 +1,10 @@
 from mcp import ClientSession
 from mcp.client.streamable_http import streamable_http_client
 import json
-
+import os
+DATABASE_SERVER_URL = os.getenv(
+    "DATABASE_SERVER_URL"
+)
 
 class DatabaseClient:
 
@@ -12,7 +15,7 @@ class DatabaseClient:
     ):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8003/mcp"
+            DATABASE_SERVER_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
@@ -41,7 +44,7 @@ class DatabaseClient:
     ):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8003/mcp"
+           DATABASE_SERVER_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
@@ -68,7 +71,7 @@ class DatabaseClient:
     ):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8003/mcp"
+            DATABASE_SERVER_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
@@ -90,7 +93,7 @@ class DatabaseClient:
     async def get_user_topics(self, user_id: int):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8003/mcp"
+            DATABASE_SERVER_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
@@ -113,7 +116,7 @@ class DatabaseClient:
     ):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8003/mcp"
+            DATABASE_SERVER_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
@@ -133,7 +136,7 @@ class DatabaseClient:
     async def get_user(self, email: str):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8003/mcp"
+            DATABASE_SERVER_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
@@ -157,7 +160,7 @@ class DatabaseClient:
     ):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8003/mcp"
+            DATABASE_SERVER_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
@@ -183,7 +186,7 @@ class DatabaseClient:
     ):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8003/mcp"
+            DATABASE_SERVER_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
@@ -215,7 +218,7 @@ class DatabaseClient:
     ):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8003/mcp"
+            DATABASE_SERVER_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
@@ -242,7 +245,7 @@ class DatabaseClient:
     ):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8003/mcp"
+            DATABASE_SERVER_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
@@ -267,7 +270,7 @@ class DatabaseClient:
     ):
 
         async with streamable_http_client(
-            "http://127.0.0.1:8003/mcp"
+            DATABASE_SERVER_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
