@@ -22,13 +22,18 @@ class StorageClient:
                     },
                 )
 
+        print(result.content[0].text)
+
         data = json.loads(result.content[0].text)
+
         return data["file"]
 
-    async def markdown_to_pdf(self, md_file: str):
+        
+
+    async def markdown_to_pdf(self, md_url: str):
 
         async with streamable_http_client(
-           STORAGE_URL
+            STORAGE_URL
         ) as (read_stream, write_stream, _):
 
             async with ClientSession(read_stream, write_stream) as session:
@@ -37,9 +42,12 @@ class StorageClient:
                 result = await session.call_tool(
                     "markdown_to_pdf",
                     {
-                        "md_file": md_file,
+                        "md_url": md_url,
                     },
                 )
 
+        print(result.content[0].text)
+
         data = json.loads(result.content[0].text)
+
         return data["pdf"]

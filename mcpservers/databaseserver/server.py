@@ -39,13 +39,13 @@ from mcpservers.databaseserver.tools.quizz_tools import (
 from mcpservers.databaseserver.tools.progresstools import (
     load_progress,
 )
-
-
+import os
+os.environ["MCP_ALLOWED_HOSTS"] = "*"
 # -------------------------------------------------
 # MCP Server
 # -------------------------------------------------
 
-mcp = FastMCP("database-server")
+mcp = FastMCP("database-server", host="0.0.0.0")
 
 
 # -------------------------------------------------

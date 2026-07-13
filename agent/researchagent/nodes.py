@@ -79,7 +79,7 @@ async def storage_node(state):
     )
 
     pdf_path = await storage.markdown_to_pdf(
-        md_file=md_path
+        md_url=md_path
     )
 
     return {

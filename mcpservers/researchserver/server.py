@@ -16,7 +16,11 @@ from mcp.server.fastmcp import FastMCP
 from dotenv import load_dotenv
 
 load_dotenv()
-mcp = FastMCP("study-assistant-tools")
+os.environ["MCP_ALLOWED_HOSTS"] = "*"
+mcp = FastMCP(
+    "study-assistant-tools",
+    host="0.0.0.0",
+)
 
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")  # free tier: https://tavily.com
 from pydantic import BaseModel

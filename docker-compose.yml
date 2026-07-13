@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+
+  research-server:
+    image: research-server
+    container_name: research-server
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  storage-server:
+    image: storage-server
+    container_name: storage-server
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    volumes:
+      - ./storage:/app/storage
+    restart: unless-stopped
+
+  backend:
+    image: study-backend
+    container_name: study-backend
+    ports:
+      - "8002:8002"
+    env_file:
+      - .env
+    depends_on:
+      - research-server
+      - storage-server
+      - database-server
+    restart: unless-stopped
+
+  database-server:
+    image: database-server
+    container_name: database-server
+    ports:
+      - "8003:8003"
+    env_file:
+      - .env
+    restart: unless-stopped

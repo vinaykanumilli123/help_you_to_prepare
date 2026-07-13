@@ -1,51 +1,75 @@
 import os
-from datetime import datetime
+import tempfile
 import markdown
-import markdown
+
 from xhtml2pdf import pisa
+from supabase import create_client
+from dotenv import load_dotenv
 
-BASE_DIR = "storage/generated_files"
+load_dotenv()
 
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+BUCKET = os.getenv("SUPABASE_BUCKET")
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
 
 def save_markdown(content: str, filename: str = "notes.md"):
-    """
-    Save markdown content into a file.
-    """
 
-    os.makedirs(BASE_DIR, exist_ok=True)
+    supabase.storage.from_(BUCKET).upload(
+        filename,
+        content.encode("utf-8"),
+        file_options={
+            "content-type": "text/markdown",
+            "upsert": "true"
+        }
+    )
 
-    path = os.path.join(BASE_DIR, filename)
-
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(content)
+    url = supabase.storage.from_(BUCKET).get_public_url(filename)
 
     return {
         "status": "success",
-        "file": path
+        "file": url
     }
 
 
 
+def markdown_to_pdf(md_url: str):
 
+    import requests
 
+    response = requests.get(md_url)
+    response.raise_for_status()
 
-
-
-def markdown_to_pdf(md_file: str):
-
-    with open(md_file, "r", encoding="utf-8") as f:
-        md = f.read()
+    md = response.text
 
     html = markdown.markdown(md)
 
-    pdf_file = md_file.replace(".md", ".pdf")
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+        pisa.CreatePDF(html, dest=tmp)
 
-    with open(pdf_file, "wb") as pdf:
-        pisa.CreatePDF(html, dest=pdf)
+        tmp.flush()
+
+        pdf_filename = os.path.basename(md_url).replace(".md", ".pdf")
+
+        with open(tmp.name, "rb") as f:
+
+            supabase.storage.from_(BUCKET).upload(
+                pdf_filename,
+                f,
+                file_options={
+                    "content-type": "application/pdf",
+                    "upsert": "true"
+                }
+            )
+
+    os.remove(tmp.name)
+
+    pdf_url = supabase.storage.from_(BUCKET).get_public_url(pdf_filename)
 
     return {
         "status": "success",
-        "pdf": pdf_file,
+        "pdf": pdf_url
     }

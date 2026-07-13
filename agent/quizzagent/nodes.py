@@ -3,7 +3,7 @@ import json
 from agent.llm import llm
 from agent.database_client import DatabaseClient
 from .prompts import QUIZ_PROMPT
-
+import requests
 db = DatabaseClient()
 
 
@@ -26,19 +26,15 @@ async def load_notes(state):
 
 
 def read_notes(state):
-    """
-    Read the markdown file.
-    """
 
-    with open(
+    response = requests.get(
         state["markdown_path"],
-        "r",
-        encoding="utf-8",
-    ) as f:
-        notes = f.read()
+        timeout=15
+    )
+    response.raise_for_status()
 
     return {
-        "notes": notes
+        "notes": response.text
     }
 
 

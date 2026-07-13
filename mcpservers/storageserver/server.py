@@ -5,11 +5,11 @@ from mcp.server.fastmcp import FastMCP
 
 from mcpservers.storageserver.tools.markdown import save_markdown, markdown_to_pdf
 from mcpservers.storageserver.tools.archieve import zip_files
-
+import os
 
 load_dotenv()
-
-mcp = FastMCP("storage-server")
+os.environ["MCP_ALLOWED_HOSTS"] = "*"
+mcp = FastMCP("storage-server", host="0.0.0.0")
 
 
 mcp.tool()(save_markdown)
