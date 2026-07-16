@@ -1,9 +1,7 @@
-version: "3.9"
-
 services:
 
   research-server:
-    image: research-server
+    image: studyassistantacr.azurecr.io/research-server:latest
     container_name: research-server
     ports:
       - "8000:8000"
@@ -12,7 +10,7 @@ services:
     restart: unless-stopped
 
   storage-server:
-    image: storage-server
+    image: studyassistantacr.azurecr.io/storage-server:latest
     container_name: storage-server
     ports:
       - "8001:8001"
@@ -23,7 +21,7 @@ services:
     restart: unless-stopped
 
   backend:
-    image: study-backend
+    image: studyassistantacr.azurecr.io/study-backend:latest
     container_name: study-backend
     ports:
       - "8002:8002"
@@ -36,7 +34,7 @@ services:
     restart: unless-stopped
 
   database-server:
-    image: database-server
+    image: studyassistantacr.azurecr.io/database-server:latest
     container_name: database-server
     ports:
       - "8003:8003"

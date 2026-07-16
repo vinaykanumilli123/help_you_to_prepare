@@ -1,4 +1,4 @@
-name: Deploy Study Assistant
+name: Build and Deploy
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,6 +20,54 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Verify Login
+      - name: Build Research Server
         run: |
-          echo "Successfully logged into ACR!"
+          docker build \
+          -f mcpservers/researchserver/Dockerfile \
+          -t studyassistantacr.azurecr.io/research-server:latest .
+
+      - name: Build Storage Server
+        run: |
+          docker build \
+          -f mcpservers/storageserver/Dockerfile \
+          -t studyassistantacr.azurecr.io/storage-server:latest .
+
+      - name: Build Database Server
+        run: |
+          docker build \
+          -f mcpservers/databaseserver/Dockerfile \
+          -t studyassistantacr.azurecr.io/database-server:latest .
+
+      - name: Build Backend
+        run: |
+          docker build \
+          -f backend/Dockerfile \
+          -t studyassistantacr.azurecr.io/study-backend:latest .
+
+      - name: Push Research Server
+        run: docker push studyassistantacr.azurecr.io/research-server:latest
+
+      - name: Push Storage Server
+        run: docker push studyassistantacr.azurecr.io/storage-server:latest
+
+      - name: Push Database Server
+        run: docker push studyassistantacr.azurecr.io/database-server:latest
+
+      - name: Push Backend
+        run: docker push studyassistantacr.azurecr.io/study-backend:latest
+
+      - name: Deploy to Azure VM
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.AZURE_VM_HOST }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_SSH_KEY }}
+
+          script: |
+            cd ~/help_you_to_prepare
+            docker login studyassistantacr.azurecr.io \
+              -u ${{ secrets.ACR_USERNAME }} \
+              -p ${{ secrets.ACR_PASSWORD }}
+
+            docker compose pull
+            docker compose up -d
