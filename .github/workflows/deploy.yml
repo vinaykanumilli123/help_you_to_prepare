@@ -13,8 +13,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Verify Runner
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: studyassistantacr.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Verify Login
         run: |
-          echo "GitHub Actions is running!"
-          pwd
-          ls -la
+          echo "Successfully logged into ACR!"
