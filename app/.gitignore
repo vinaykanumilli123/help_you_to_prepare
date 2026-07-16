@@ -1,0 +1,11 @@
+.env.local
+.env
+.env*.local
+node_modules
+.next
+build
+dist
+*.swp
+*.swo
+*~
+.DS_Store
