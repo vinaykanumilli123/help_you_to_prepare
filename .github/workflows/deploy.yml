@@ -65,9 +65,15 @@ jobs:
 
           script: |
             cd ~/help_you_to_prepare
-            docker login studyassistantacr.azurecr.io \
-              -u ${{ secrets.ACR_USERNAME }} \
-              -p ${{ secrets.ACR_PASSWORD }}
 
+            # Login using VM Managed Identity
+            az login --identity
+
+            # Login to Azure Container Registry
+            az acr login --name studyassistantacr
+
+            # Pull latest images
             docker compose pull
+
+            # Restart containers
             docker compose up -d
