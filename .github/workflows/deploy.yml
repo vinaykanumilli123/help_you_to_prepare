@@ -23,6 +23,10 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
+      # ----------------------------
+      # Build Images
+      # ----------------------------
+
       - name: Build Research Server
         run: |
           docker build \
@@ -51,6 +55,10 @@ jobs:
           -t studyassistantacr.azurecr.io/study-backend:latest \
           -t studyassistantacr.azurecr.io/study-backend:${{ env.IMAGE_TAG }} .
 
+      # ----------------------------
+      # Push Images
+      # ----------------------------
+
       - name: Push Research Server
         run: |
           docker push studyassistantacr.azurecr.io/research-server:latest
@@ -71,6 +79,23 @@ jobs:
           docker push studyassistantacr.azurecr.io/study-backend:latest
           docker push studyassistantacr.azurecr.io/study-backend:${{ env.IMAGE_TAG }}
 
+      # ----------------------------
+      # Copy Compose Template to VM
+      # ----------------------------
+
+      - name: Copy Docker Compose Template
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.AZURE_VM_HOST }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_SSH_KEY }}
+          source: "docker-compose.template.yml"
+          target: "~/help_you_to_prepare"
+
+      # ----------------------------
+      # Deploy
+      # ----------------------------
+
       - name: Deploy to Azure VM
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -81,17 +106,12 @@ jobs:
           script: |
             cd ~/help_you_to_prepare
 
-            # Login using VM Managed Identity
             az login --identity
 
-            # Login to Azure Container Registry
             az acr login --name studyassistantacr
 
-            # Update IMAGE_TAG in .env
-            sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${{ env.IMAGE_TAG }}/" .env
+            sed "s/IMAGE_TAG/${{ env.IMAGE_TAG }}/g" docker-compose.template.yml > docker-compose.yml
 
-            # Pull only the required image versions
             docker compose pull
 
-            # Restart containers
             docker compose up -d

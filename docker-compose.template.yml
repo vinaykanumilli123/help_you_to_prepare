@@ -1,0 +1,43 @@
+services:
+
+  research-server:
+    image: studyassistantacr.azurecr.io/research-server:IMAGE_TAG
+    container_name: research-server
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  storage-server:
+    image: studyassistantacr.azurecr.io/storage-server:IMAGE_TAG
+    container_name: storage-server
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    volumes:
+      - ./storage:/app/storage
+    restart: unless-stopped
+
+  database-server:
+    image: studyassistantacr.azurecr.io/database-server:IMAGE_TAG
+    container_name: database-server
+    ports:
+      - "8003:8003"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  backend:
+    image: studyassistantacr.azurecr.io/study-backend:IMAGE_TAG
+    container_name: study-backend
+    ports:
+      - "8002:8002"
+    env_file:
+      - .env
+    depends_on:
+      - research-server
+      - storage-server
+      - database-server
+    restart: unless-stopped
