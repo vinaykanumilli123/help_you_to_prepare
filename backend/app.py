@@ -28,3 +28,10 @@ async def root():
     return {
         "message": "Study Assistant Backend Running"
     }
+
+@app.get("/version")
+def version():
+    return {
+        "message": "Deployment Successful 🚀",
+        "version": "v2"
+    }
