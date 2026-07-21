@@ -87,7 +87,10 @@ jobs:
             # Login to Azure Container Registry
             az acr login --name studyassistantacr
 
-            # Pull latest images
+            # Update IMAGE_TAG in .env
+            sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${{ env.IMAGE_TAG }}/" .env
+
+            # Pull only the required image versions
             docker compose pull
 
             # Restart containers
