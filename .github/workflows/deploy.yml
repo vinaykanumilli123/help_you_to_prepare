@@ -13,6 +13,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Set Image Tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
       - name: Login to Azure Container Registry
         uses: docker/login-action@v3
         with:
@@ -24,37 +27,49 @@ jobs:
         run: |
           docker build \
           -f mcpservers/researchserver/Dockerfile \
-          -t studyassistantacr.azurecr.io/research-server:latest .
+          -t studyassistantacr.azurecr.io/research-server:latest \
+          -t studyassistantacr.azurecr.io/research-server:${{ env.IMAGE_TAG }} .
 
       - name: Build Storage Server
         run: |
           docker build \
           -f mcpservers/storageserver/Dockerfile \
-          -t studyassistantacr.azurecr.io/storage-server:latest .
+          -t studyassistantacr.azurecr.io/storage-server:latest \
+          -t studyassistantacr.azurecr.io/storage-server:${{ env.IMAGE_TAG }} .
 
       - name: Build Database Server
         run: |
           docker build \
           -f mcpservers/databaseserver/Dockerfile \
-          -t studyassistantacr.azurecr.io/database-server:latest .
+          -t studyassistantacr.azurecr.io/database-server:latest \
+          -t studyassistantacr.azurecr.io/database-server:${{ env.IMAGE_TAG }} .
 
       - name: Build Backend
         run: |
           docker build \
           -f backend/Dockerfile \
-          -t studyassistantacr.azurecr.io/study-backend:latest .
+          -t studyassistantacr.azurecr.io/study-backend:latest \
+          -t studyassistantacr.azurecr.io/study-backend:${{ env.IMAGE_TAG }} .
 
       - name: Push Research Server
-        run: docker push studyassistantacr.azurecr.io/research-server:latest
+        run: |
+          docker push studyassistantacr.azurecr.io/research-server:latest
+          docker push studyassistantacr.azurecr.io/research-server:${{ env.IMAGE_TAG }}
 
       - name: Push Storage Server
-        run: docker push studyassistantacr.azurecr.io/storage-server:latest
+        run: |
+          docker push studyassistantacr.azurecr.io/storage-server:latest
+          docker push studyassistantacr.azurecr.io/storage-server:${{ env.IMAGE_TAG }}
 
       - name: Push Database Server
-        run: docker push studyassistantacr.azurecr.io/database-server:latest
+        run: |
+          docker push studyassistantacr.azurecr.io/database-server:latest
+          docker push studyassistantacr.azurecr.io/database-server:${{ env.IMAGE_TAG }}
 
       - name: Push Backend
-        run: docker push studyassistantacr.azurecr.io/study-backend:latest
+        run: |
+          docker push studyassistantacr.azurecr.io/study-backend:latest
+          docker push studyassistantacr.azurecr.io/study-backend:${{ env.IMAGE_TAG }}
 
       - name: Deploy to Azure VM
         uses: appleboy/ssh-action@v1.2.0
